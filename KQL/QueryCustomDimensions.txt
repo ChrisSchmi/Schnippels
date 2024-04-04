@@ -1,0 +1,9 @@
+traces
+| where timestamp > ago(12h)
+| where customDimensions contains "x-ClientOs"
+| extend Os = tostring(parse_json(customDimensions)["X-ClientOs"])
+| extend Version = tostring(parse_json(customDimensions)["X-App-Version"])
+| extend UserId = customDimensions.UserId
+| extend ClientId = tostring(customDimensions.ClientId)
+| summarize Count = count() by tostring(UserId), Os, ClientId, Version
+| project UserId, Os, ClientId, Version, Count
